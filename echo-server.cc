@@ -15,9 +15,9 @@ int main(int argc, char *argv[])
 {
   int sock, msg_sock;
 
-  if (argc != 3) {
+  if (argc != 2) {
     printf ("Wrong number of arguments\n");
-    printf ("Usage: %s [port_number]\n", argv[1]);
+    printf ("Usage: %s [port_number]\n", argv[0]);
     return -1;
   }
   int portNum = atoi(argv[2]);
