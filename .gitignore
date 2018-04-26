@@ -2,3 +2,4 @@ echo-server
 echo-server.o
 err.o
 .idea
+cmake-build-debug
