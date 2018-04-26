@@ -4,12 +4,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include <unistd.h>
 
 #include "err.h"
+#include "ansi.h"
 
 #define BUFFER_SIZE   2000
 #define QUEUE_LENGTH     5
+
+class MyStream {
+    int& port;
+public:
+    MyStream() = delete;
+    MyStream(int& msg_sock) : port(msg_sock){}
+
+    void operator>> (const std::string &s) {
+      const char *c = s.c_str();
+      int status = write(port, c, s.length());
+      if (status < 0)
+        syserr("Writing to socket");
+    }
+};
 
 int main(int argc, char *argv[])
 {
@@ -29,6 +45,8 @@ int main(int argc, char *argv[])
 
   char buffer[BUFFER_SIZE];
   ssize_t len, snd_len;
+
+  MyStream istr(msg_sock);
 
   sock = socket(PF_INET, SOCK_STREAM, 0); // creating IPv4 TCP socket
   if (sock < 0)
@@ -57,8 +75,10 @@ int main(int argc, char *argv[])
       syserr("accept");
 
     printf("new connection on socket slot %d accepted\n", msg_sock);
+    write(msg_sock,"\377\375\042\377\375\001",6); //negotiations
     do {
       len = read(msg_sock, buffer, sizeof(buffer));
+      istr >> ansi::CLEAR_SCREEN;
       if (len < 0)
         syserr("reading from client socket");
       else {
@@ -69,7 +89,6 @@ int main(int argc, char *argv[])
       }
     } while (len > 0);
     printf("ending connection\n");
-
     if (close(msg_sock) < 0)
       syserr("close");
   }

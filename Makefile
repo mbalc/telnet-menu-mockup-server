@@ -11,12 +11,12 @@ debug: CXXFLAGS	+= -O0 -DDEBUG -g
 debug: CCFLAGS	+= -O0 -DDEBUG -g
 debug: echo-server
 
-echo-server.o err.o: err.h
+echo-server.o err.o: err.h ansi.h
 
 echo-server: echo-server.o err.o
 	$(CC) $(CXXFLAGS) $^ -o $@
 
-.PHONY: clean TARGET debug
+.PHONY: clear clean TARGET debug
 
-clean:
+clean clear:
 	rm -f echo-server *.o *~ *.bak
