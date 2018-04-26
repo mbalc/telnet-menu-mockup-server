@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     printf ("Usage: %s [port_number]\n", argv[0]);
     return -1;
   }
-  int portNum = atoi(argv[2]);
+  int portNum = atoi(argv[1]);
 
   struct sockaddr_in server_address;
   struct sockaddr_in client_address;
@@ -55,6 +55,8 @@ int main(int argc, char *argv[])
     msg_sock = accept(sock, (struct sockaddr *) &client_address, &client_address_len);
     if (msg_sock < 0)
       syserr("accept");
+
+    printf("new connection on socket slot %d accepted\n", msg_sock);
     do {
       len = read(msg_sock, buffer, sizeof(buffer));
       if (len < 0)
@@ -67,6 +69,7 @@ int main(int argc, char *argv[])
       }
     } while (len > 0);
     printf("ending connection\n");
+
     if (close(msg_sock) < 0)
       syserr("close");
   }
