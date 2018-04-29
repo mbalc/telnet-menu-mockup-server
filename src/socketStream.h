@@ -12,15 +12,17 @@
 #include "err.h"
 #include "example-data.h"
 
-class socketstream {
+class socketStream {
     constexpr static int BUFFER_SIZE = 2000;
     static char buffer[BUFFER_SIZE];
     int port;
 
 public:
-    socketstream(int sock, struct sockaddr_in &client_address, socklen_t &client_address_len);
+    /// get client connection from the socket
+    socketStream(int sock, struct sockaddr_in &client_address, socklen_t &client_address_len);
 
-    ~socketstream();
+    /// close opened connection
+    ~socketStream();
 
     /// read from socket connection
     void operator>>(std::__cxx11::string &s);

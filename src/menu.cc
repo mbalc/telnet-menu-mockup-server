@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "defs.h"
 
 menu::menu(const menu_t &content) : content(content) {}
 
@@ -8,9 +9,9 @@ std::string menu::getContent() {
     for (const auto &i : currentSub) {
         if (i.first == highlight) output += i.second.getHighlight();
         else output += i.second.getContent();
-        output += "\r\n";
+        output += ansi::ENTER;
     }
-    return output + "\r\n";
+    return output + ansi::ENTER;
 }
 
 void menu::execute() {

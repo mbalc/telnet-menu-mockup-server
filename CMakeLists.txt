@@ -10,4 +10,4 @@ add_executable(1
         src/defs.h
         src/echo-server.cc
         src/err.cc
-        src/err.h src/entry.cc src/entry.h src/menu.cc src/menu.h src/example-data.h src/socketstream.h src/socketstream.cc)
+        src/err.h src/entry.cc src/entry.h src/menu.cc src/menu.h src/example-data.h src/socketStream.h src/socketStream.cc)

@@ -4,12 +4,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <string>
 
 #include "err.h"
 #include "defs.h"
 #include "example-data.h"
-#include "socketstream.h"
+#include "socketStream.h"
 
 #define QUEUE_LENGTH    20
 
@@ -22,6 +21,7 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
     std::string input;
+    std::string const *output;
 
     socklen_t client_address_len;
     int portNum = atoi(argv[1]);
@@ -45,23 +45,24 @@ int main(int argc, char *argv[]) {
         syserr("listen");
 
     printf("accepting client connections on port %hu\n", ntohs(server_address.sin_port));
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     for (;;) {
         client_address_len = sizeof(client_address);
-        // get client connection from the socket
-        socketstream istr(sock, client_address, client_address_len);
+        socketStream istr(sock, client_address, client_address_len);
+        output = &outs::EMPTY;
+        exampleData hud(input, output);
+
 
         //telnet negotiations
         istr << tnet::DEFAULT_NEGOTIATION_MESSAGE;
 
         istr << ansi::CLEAR_SCREEN + ansi::SUPRESS_LOCAL_ECHO;
-        exampleData hud(input);
 
         do {
-            //TODO make screen refresh conditional
             istr << ansi::RESET_CURSOR + ansi::CLEAR_SCREEN;
-            istr << hud.getContent();
+            istr << hud.getContent() + *output + ansi::ENTER;
             istr >> input;
             if (input == keys::ARROW_UP) hud.move(-1);
             if (input == keys::ARROW_DOWN) hud.move(1);

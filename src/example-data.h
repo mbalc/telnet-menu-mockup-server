@@ -4,6 +4,7 @@
 
 #include <list>
 #include "menu.h"
+#include "defs.h"
 
 class exampleData : public menu {
 private:
@@ -20,18 +21,18 @@ private:
                 }}
     };
 public:
-    exampleData(std::string &input) {
+    exampleData(std::string &input, const std::string *&output) {
         content = myData;
         using bind_t = std::tuple<int, int, std::function<void()>>;
         bind_t actions[] = {
-                {0, 0, [] {}},
+                {0, 0, [&] {output = &outs::A;}},
                 {0, 1, [&] {
                     highlight = 0;
                     submenu = 1;
                 }},
                 {0, 2, [&] { input = ""; }}, // input.length()==0 breaks out of main loop
-                {1, 0, [] {}},
-                {1, 1, [] {}},
+                {1, 0, [&] {output = &outs::B1;}},
+                {1, 1, [&] {output = &outs::B2;}},
                 {1, 2, [&] {
                     highlight = 0;
                     submenu = 0;
