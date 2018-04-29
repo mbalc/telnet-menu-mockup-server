@@ -7,13 +7,14 @@
 class menu {
     using submenu_t = std::map<int, entry>;
     using menu_t = std::map<int, submenu_t>;
-private:
+protected:
     menu_t content;
-    int highlight = 0, choice = 0;
+    int highlight = 0, submenu = 0;
 public:
+    menu() = default;
     menu(const menu_t &content);
 
-    std::string getContent(int highlight);
+    std::string getContent();
 };
 
 

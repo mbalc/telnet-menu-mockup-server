@@ -4,11 +4,11 @@
 entry::entry(const std::string &content) : content(content) {}
 
 std::string entry::getContent() const {
-    return this->content;
+    return content;
 }
 
 std::string entry::getHighlight() const {
-    return this->getContent() + "  <<--";
+    return getContent() + "  <<--";
 }
 
 void entry::execute() {

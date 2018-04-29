@@ -9,4 +9,4 @@ add_executable(1
         src/ansi.h
         src/echo-server.cc
         src/err.cc
-        src/err.h src/entry.cc src/entry.h src/menu.cc src/menu.h)
+        src/err.h src/entry.cc src/entry.h src/menu.cc src/menu.h src/example-data.h)

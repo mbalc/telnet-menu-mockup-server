@@ -16,12 +16,11 @@
 class MyStream {
     int& port;
 public:
-    MyStream() = delete;
     MyStream(int& msg_sock) : port(msg_sock){}
 
     void operator>> (const std::string &s) {
       const char *c = s.c_str();
-      int status = write(port, c, s.length());
+      ssize_t status = write(port, c, s.length());
       if (status < 0)
         syserr("Writing to socket");
     }
@@ -38,9 +37,6 @@ int main(int argc, char *argv[])
   }
   int portNum = atoi(argv[1]);
 
-  struct sockaddr_in server_address;
-  struct sockaddr_in client_address;
-
   socklen_t client_address_len;
 
   char buffer[BUFFER_SIZE];
@@ -53,6 +49,9 @@ int main(int argc, char *argv[])
     syserr("socket");
   // after socket() call; we should close(sock) on any execution path;
   // since all execution paths exit immediately, sock would be closed when program terminates
+
+  struct sockaddr_in server_address;
+  struct sockaddr_in client_address;
 
   server_address.sin_family = AF_INET; // IPv4
   server_address.sin_addr.s_addr = htonl(INADDR_ANY); // listening on all interfaces
