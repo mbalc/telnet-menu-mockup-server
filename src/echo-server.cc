@@ -1,14 +1,14 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <string>
 #include <unistd.h>
 
 #include "err.h"
-#include "ansi.h"
+#include "defs.h"
 
 #define BUFFER_SIZE   2000
 #define QUEUE_LENGTH     5
@@ -20,8 +20,9 @@ public:
 
     void operator>> (const std::string &s) {
       const char *c = s.c_str();
+      unsigned long messageLength = s.length();
       ssize_t status = write(port, c, s.length());
-      if (status < 0)
+      if (status != messageLength)
         syserr("Writing to socket");
     }
 };
@@ -66,6 +67,8 @@ int main(int argc, char *argv[])
     syserr("listen");
 
   printf("accepting client connections on port %hu\n", ntohs(server_address.sin_port));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
   for (;;) {
     client_address_len = sizeof(client_address);
     // get client connection from the socket
@@ -74,23 +77,30 @@ int main(int argc, char *argv[])
       syserr("accept");
 
     printf("new connection on socket slot %d accepted\n", msg_sock);
-    write(msg_sock,"\377\375\042\377\375\001",6); //negotiations
+
+    //telnet negotiations
+    istr >> tnet::DEFAULT_NEGOTIATION_MESSAGE;
+
+      istr >> ansi::CLEAR_SCREEN + ansi::SUPRESS_LOCAL_ECHO;
     do {
+      //TODO conditional screen refresh
       len = read(msg_sock, buffer, sizeof(buffer));
-      istr >> ansi::CLEAR_SCREEN;
       if (len < 0)
         syserr("reading from client socket");
       else {
-        printf("read from socket: %zd bytes: %.*s\n", len, (int) len, buffer);
-        snd_len = write(msg_sock, buffer, len);
-        if (snd_len != len)
-          syserr("writing to client socket");
+        printf("read from socket: %zd bytes: %.*s\n(", len, (int) len, buffer);
+        for (int i = 0; i < len; ++i) {
+            printf ("%hhu ", buffer[i]);
+        }
+        printf (")\n");
+        // TODO handle input
       }
     } while (len > 0);
     printf("ending connection\n");
     if (close(msg_sock) < 0)
       syserr("close");
   }
+#pragma clang diagnostic pop
 
   return 0;
 }
