@@ -7,31 +7,32 @@
 
 class exampleData : public menu {
 private:
-    menu_t myData{
-            {0, new submenu_t{
-                    {0, new entry("Opcja A")},
-                    {1, new entry("Opcja B")},
-                    {2, new entry("Koniec")}
-            }},
-            {1, new submenu_t{
-                    {0, new entry("Opcja B1")},
-                    {1, new entry("Opcja B2")},
-                    {2, new entry("Wstecz")}
-            }}
+    const menu_t myData = {
+            {0, {
+                        {0, entry("Opcja A")},
+                        {1, entry("Opcja B")},
+                        {2, entry("Koniec")}
+                }},
+            {1, {
+                        {0, entry("Opcja B1")},
+                        {1, entry("Opcja B2")},
+                        {2, entry("Wstecz")}
+                }}
     };
 public:
-    exampleData() : content(myData) {
+    exampleData() {
+        content = myData;
         using bind_t = std::tuple<int, int, std::function<void()>>;
         bind_t actions[] = {
                 {0, 0, [] {}},
-                {0, 1, [] { submenu = 1; }},
+                {0, 1, [=] { submenu = 1; }},
                 {0, 2, [] {}},
                 {1, 0, [] {}},
                 {1, 1, [] {}},
-                {1, 2, [] { submenu = 0; }}
+                {1, 2, [=] { submenu = 0; }}
         };
         for (bind_t &b : actions) {
-            content[b.get(0)][b.get(1)].setAction(b.get(2));
+            content.at(std::get<0>(b)).at(std::get<1>(b)).setAction(std::get<2>(b));
         }
     }
 };

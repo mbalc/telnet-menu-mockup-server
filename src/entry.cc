@@ -8,7 +8,7 @@ std::string entry::getContent() const {
 }
 
 std::string entry::getHighlight() const {
-    return getContent() + "  <<--";
+    return "> " + getContent() + "  <<--";
 }
 
 void entry::execute() {

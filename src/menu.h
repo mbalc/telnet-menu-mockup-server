@@ -5,9 +5,9 @@
 #include "entry.h"
 
 class menu {
+protected:
     using submenu_t = std::map<int, entry>;
     using menu_t = std::map<int, submenu_t>;
-protected:
     menu_t content;
     int highlight = 0, submenu = 0;
 public:

@@ -9,6 +9,7 @@
 
 #include "err.h"
 #include "defs.h"
+#include "example-data.h"
 
 #define BUFFER_SIZE   2000
 #define QUEUE_LENGTH     5
@@ -28,14 +29,13 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-    int sock, msg_sock;
 
     if (argc != 2) {
         printf("Wrong number of arguments\n");
         printf("Usage: %s [port_number]\n", argv[0]);
         return -1;
     }
-    int portNum = atoi(argv[1]);
+    int sock, msg_sock, portNum = atoi(argv[1]);
 
     socklen_t client_address_len;
 
@@ -75,14 +75,18 @@ int main(int argc, char *argv[]) {
         if (msg_sock < 0)
             syserr("accept");
 
-        printf("new connection on socket slot %d accepted\n", msg_sock);
+        printf("new socket connection with return status %d accepted\n", msg_sock);
 
         //telnet negotiations
         istr >> tnet::DEFAULT_NEGOTIATION_MESSAGE;
 
         istr >> ansi::CLEAR_SCREEN + ansi::SUPRESS_LOCAL_ECHO;
+        exampleData hud;
+
         do {
-            //TODO conditional screen refresh
+            //TODO make screen refresh conditional
+            istr >> ansi::RESET_CURSOR + ansi::CLEAR_SCREEN;
+            istr >> hud.getContent();
             len = read(msg_sock, buffer, sizeof(buffer));
             if (len < 0)
                 syserr("reading from client socket");
