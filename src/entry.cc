@@ -1,4 +1,5 @@
 #include "entry.h"
+#include "defs.h"
 #include <utility>
 
 entry::entry(const std::string &content) : content(content) {}
@@ -8,7 +9,7 @@ std::string entry::getContent() const {
 }
 
 std::string entry::getHighlight() const {
-    return "> " + getContent() + "  <<--";
+    return " " + ansi::FONT_BOLD + getContent() + ansi::FONT_RESET + "  <<-";
 }
 
 void entry::execute() {

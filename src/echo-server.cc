@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 
         do {
             istr << ansi::RESET_CURSOR + ansi::CLEAR_SCREEN;
-            istr << hud.getContent() + *output + ansi::ENTER;
+            istr << hud.getContent() + ansi::FONT_BOLD + *output + ansi::FONT_RESET + ansi::ENTER;
             istr >> input;
             if (input == keys::ARROW_UP) hud.move(-1);
             if (input == keys::ARROW_DOWN) hud.move(1);
