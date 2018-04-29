@@ -29,18 +29,17 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-
     if (argc != 2) {
         printf("Wrong number of arguments\n");
         printf("Usage: %s [port_number]\n", argv[0]);
-        return -1;
+        return 1;
     }
     int sock, msg_sock, portNum = atoi(argv[1]);
 
     socklen_t client_address_len;
 
     char buffer[BUFFER_SIZE];
-    ssize_t len, snd_len;
+    ssize_t len;
 
     MyStream istr(msg_sock);
 
@@ -92,11 +91,11 @@ int main(int argc, char *argv[]) {
                 syserr("reading from client socket");
             else {
                 printf("read from socket: %zd bytes: %.*s\n(", len, (int) len, buffer);
-                for (int i = 0; i < len; ++i) {
-                    printf("%hhu ", buffer[i]);
-                }
-                printf(")\n");
+                std::string input(buffer, len);
                 // TODO handle input
+                if (input == keys::ARROW_UP)  hud.move(-1);
+                if (input == keys::ARROW_DOWN)  hud.move(1);
+                if (input == keys::ENTER)  hud.execute();
             }
         } while (len > 0);
         printf("ending connection\n");

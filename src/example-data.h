@@ -25,11 +25,17 @@ public:
         using bind_t = std::tuple<int, int, std::function<void()>>;
         bind_t actions[] = {
                 {0, 0, [] {}},
-                {0, 1, [=] { submenu = 1; }},
+                {0, 1, [&] {
+                    highlight = 0;
+                    submenu = 1;
+                }},
                 {0, 2, [] {}},
                 {1, 0, [] {}},
                 {1, 1, [] {}},
-                {1, 2, [=] { submenu = 0; }}
+                {1, 2, [&] {
+                    highlight = 0;
+                    submenu = 0;
+                }}
         };
         for (bind_t &b : actions) {
             content.at(std::get<0>(b)).at(std::get<1>(b)).setAction(std::get<2>(b));

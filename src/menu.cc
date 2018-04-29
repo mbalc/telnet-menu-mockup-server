@@ -14,7 +14,7 @@ std::string menu::getContent() {
 }
 
 void menu::execute() {
-//    content[submenu][highlight].execute();
+    content.at(submenu).at(highlight).execute();
 }
 
 void menu::move(int difference) {

@@ -6,9 +6,17 @@
 namespace ansi {
     static const std::string ESC = "\33";
     static const std::string CLEAR_SCREEN = ESC + "[2J";
-    static const std::string CLEAR_BELOW= ESC + "[0J";
+    static const std::string CLEAR_BELOW = ESC + "[0J";
     static const std::string RESET_CURSOR = ESC + "[H";
     static const std::string SUPRESS_LOCAL_ECHO = ESC + "[12h";
+}
+
+namespace keys {
+    static const std::string ESC = "\33";
+    static const std::string
+            ARROW_UP = ESC + "[A",
+            ARROW_DOWN = ESC + "[B",
+            ENTER = {char(13), char(0)};
 }
 
 namespace tnet {
