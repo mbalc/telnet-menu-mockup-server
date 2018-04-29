@@ -20,7 +20,7 @@ private:
                 }}
     };
 public:
-    exampleData() {
+    exampleData(std::string &input) {
         content = myData;
         using bind_t = std::tuple<int, int, std::function<void()>>;
         bind_t actions[] = {
@@ -29,7 +29,7 @@ public:
                     highlight = 0;
                     submenu = 1;
                 }},
-                {0, 2, [] {}},
+                {0, 2, [&] { input = ""; }}, // input.length()==0 breaks out of main loop
                 {1, 0, [] {}},
                 {1, 1, [] {}},
                 {1, 2, [&] {

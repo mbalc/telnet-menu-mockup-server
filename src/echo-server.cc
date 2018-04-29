@@ -5,28 +5,13 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
-#include <unistd.h>
 
 #include "err.h"
 #include "defs.h"
 #include "example-data.h"
+#include "socketstream.h"
 
-#define BUFFER_SIZE   2000
-#define QUEUE_LENGTH     5
-
-class MyStream {
-    int &port;
-public:
-    MyStream(int &msg_sock) : port(msg_sock) {}
-
-    void operator>>(const std::string &s) {
-        const char *c = s.c_str();
-        unsigned long messageLength = s.length();
-        ssize_t status = write(port, c, s.length());
-        if (status != messageLength)
-            syserr("Writing to socket");
-    }
-};
+#define QUEUE_LENGTH    20
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -34,23 +19,18 @@ int main(int argc, char *argv[]) {
         printf("Usage: %s [port_number]\n", argv[0]);
         return 1;
     }
-    int sock, msg_sock, portNum = atoi(argv[1]);
+    struct sockaddr_in server_address;
+    struct sockaddr_in client_address;
+    std::string input;
 
     socklen_t client_address_len;
-
-    char buffer[BUFFER_SIZE];
-    ssize_t len;
-
-    MyStream istr(msg_sock);
-
-    sock = socket(PF_INET, SOCK_STREAM, 0); // creating IPv4 TCP socket
+    int portNum = atoi(argv[1]);
+    int sock = socket(PF_INET, SOCK_STREAM, 0); // creating IPv4 TCP socket
     if (sock < 0)
         syserr("socket");
     // after socket() call; we should close(sock) on any execution path;
     // since all execution paths exit immediately, sock would be closed when program terminates
 
-    struct sockaddr_in server_address;
-    struct sockaddr_in client_address;
 
     server_address.sin_family = AF_INET; // IPv4
     server_address.sin_addr.s_addr = htonl(INADDR_ANY); // listening on all interfaces
@@ -70,37 +50,23 @@ int main(int argc, char *argv[]) {
     for (;;) {
         client_address_len = sizeof(client_address);
         // get client connection from the socket
-        msg_sock = accept(sock, (struct sockaddr *) &client_address, &client_address_len);
-        if (msg_sock < 0)
-            syserr("accept");
-
-        printf("new socket connection with return status %d accepted\n", msg_sock);
+        socketstream istr(sock, client_address, client_address_len);
 
         //telnet negotiations
-        istr >> tnet::DEFAULT_NEGOTIATION_MESSAGE;
+        istr << tnet::DEFAULT_NEGOTIATION_MESSAGE;
 
-        istr >> ansi::CLEAR_SCREEN + ansi::SUPRESS_LOCAL_ECHO;
-        exampleData hud;
+        istr << ansi::CLEAR_SCREEN + ansi::SUPRESS_LOCAL_ECHO;
+        exampleData hud(input);
 
         do {
             //TODO make screen refresh conditional
-            istr >> ansi::RESET_CURSOR + ansi::CLEAR_SCREEN;
-            istr >> hud.getContent();
-            len = read(msg_sock, buffer, sizeof(buffer));
-            if (len < 0)
-                syserr("reading from client socket");
-            else {
-                printf("read from socket: %zd bytes: %.*s\n(", len, (int) len, buffer);
-                std::string input(buffer, len);
-                // TODO handle input
-                if (input == keys::ARROW_UP)  hud.move(-1);
-                if (input == keys::ARROW_DOWN)  hud.move(1);
-                if (input == keys::ENTER)  hud.execute();
-            }
-        } while (len > 0);
-        printf("ending connection\n");
-        if (close(msg_sock) < 0)
-            syserr("close");
+            istr << ansi::RESET_CURSOR + ansi::CLEAR_SCREEN;
+            istr << hud.getContent();
+            istr >> input;
+            if (input == keys::ARROW_UP) hud.move(-1);
+            if (input == keys::ARROW_DOWN) hud.move(1);
+            if (input == keys::ENTER) hud.execute();
+        } while (input.length() > 0);
     }
 #pragma clang diagnostic pop
 

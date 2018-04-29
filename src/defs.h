@@ -3,6 +3,7 @@
 
 #include <string>
 
+//TODO constexpr ?
 namespace ansi {
     static const std::string ESC = "\33";
     static const std::string CLEAR_SCREEN = ESC + "[2J";
