@@ -11,7 +11,7 @@ socketStream::socketStream(int sock, struct sockaddr_in &client_address, socklen
 }
 
 socketStream::~socketStream() {
-    printf("ending connection\n");
+    printf("client has disconnected\n");
     if (close(port) < 0)
         syserr("close");
 }
