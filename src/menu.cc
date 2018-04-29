@@ -18,7 +18,7 @@ void menu::execute() {
 void menu::move(int difference) {
     int newCandidate = highlight + difference;
     submenu_t &currentSubmenu = content[submenu];
-    newCandidate = std::min (newCandidate, currentSubmenu.rbegin()->first);  // don't exceed boundary key values
-    newCandidate = std::max (newCandidate, currentSubmenu.begin()->first);
+    newCandidate = std::min(newCandidate, currentSubmenu.rbegin()->first);  // don't exceed boundary key values
+    newCandidate = std::max(newCandidate, currentSubmenu.begin()->first);
     highlight = newCandidate;
 }

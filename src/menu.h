@@ -12,10 +12,13 @@ protected:
     int highlight = 0, submenu = 0;
 public:
     menu() = default;
+
     menu(const menu_t &content);
 
     std::string getContent();
+
     void execute();
+
     void move(int difference);
 };
 

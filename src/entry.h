@@ -10,9 +10,13 @@ private:
     std::function<void()> action;
 public:
     entry(const std::string &content);
+
     std::string getContent() const;
+
     std::string getHighlight() const;
+
     void setAction(const std::function<void()> &action);
+
     void execute();
 };
 
