@@ -15,6 +15,8 @@ public:
     menu(const menu_t &content);
 
     std::string getContent();
+    void execute();
+    void move(int difference);
 };
 
 
