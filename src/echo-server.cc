@@ -64,8 +64,10 @@ int main(int argc, char *argv[]) {
             istr << ansi::RESET_CURSOR + ansi::CLEAR_SCREEN;
             istr << hud.getContent() + ansi::FONT_BOLD + *output + ansi::FONT_RESET + ansi::ENTER;
             istr >> input;
+
             if (input == keys::ARROW_UP) hud.move(-1);
             if (input == keys::ARROW_DOWN) hud.move(1);
+            if (input == keys::PAGE_UP) hud.setSubmenu(0);
             if (input == keys::ENTER) hud.execute();
         } while (input.length() > 0);
     }

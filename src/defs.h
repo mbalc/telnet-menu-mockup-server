@@ -19,6 +19,7 @@ namespace keys {
     static const std::string
             ARROW_UP = ESC + "[A",
             ARROW_DOWN = ESC + "[B",
+            PAGE_UP = ESC + "[5~",
             ENTER = {char(13), char(0)};
 }
 

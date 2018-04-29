@@ -42,6 +42,9 @@ public:
             content.at(std::get<0>(b)).at(std::get<1>(b)).setAction(std::get<2>(b));
         }
     }
+    void setSubmenu(int val) {
+        submenu = val;
+    }
 };
 
 
